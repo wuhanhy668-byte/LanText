@@ -48,7 +48,9 @@ $env:LANTEXT_PORT = '8877'
 
 ## 2. 用 GitHub Actions 无签名构建
 
-当前交付目录本身不预设远程仓库。创建自己的 GitHub 仓库，把 **LanText 目录内的内容** 上传到仓库根目录，确保 `.github/workflows/build.yml` 位于根目录的 `.github/workflows/` 下，而不是嵌套在 `outputs/LanText/` 中。不要上传 `runtime/`、签名材料或 `build/`。
+工程已经上传到 [wuhanhy668-byte/LanText](https://github.com/wuhanhy668-byte/LanText)，[构建 #2](https://github.com/wuhanhy668-byte/LanText/actions/runs/37601558185) 已通过 Windows 测试、EXE 构建及 Apple 无签名编译，生成了可供自行签名的 IPA。
+
+如另建自己的仓库，把 **LanText 目录内的内容** 上传到仓库根目录，确保 `.github/workflows/build.yml` 位于根目录的 `.github/workflows/` 下，而不是嵌套在 `outputs/LanText/` 中。不要上传 `runtime/`、签名材料或 `build/`。
 
 如果用 Git，可在此项目目录执行（需要本机安装 Git；将地址换成自己的仓库）：
 
@@ -165,7 +167,7 @@ node --test tests/*.test.mjs
 npm test
 ```
 
-实际执行的测试与未验证项目请看 [TESTING.md](TESTING.md)。苹果工程在 Windows 上只能做静态配置检查，**提供工作流不代表 GitHub 上已成功编译**。上传仓库后，以 Actions 两个无签名 Xcode build 的绿色结果为编译验证依据。
+实际执行的测试与真机待验收项目请看 [TESTING.md](TESTING.md)。本次已在 GitHub macOS 15 / Xcode 16.4 上完成模拟器和 ARM64 真机两种无签名编译，均成功；签名安装、字号/全屏/常亮以及真实网络断线恢复仍需 iPad 真机验收。
 
 ## 7. 连接失败排查
 

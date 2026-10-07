@@ -1,6 +1,6 @@
 # 验证记录与真机验收
 
-验证日期：2026-10-07（Asia/Shanghai）。当前环境是 Windows，无 Mac、Xcode、iPad 真机连接或签名材料，也未配置目标 GitHub 远程仓库。因此 **Apple 编译、签名、安装和真机显示尚未执行**；以下区分实际运行的测试与仅配置好的检查。
+验证日期：2026-10-07（Asia/Shanghai）。本地为 Windows；已将完整工程上传到 `wuhanhy668-byte/LanText`，并在 GitHub macOS 15 / Xcode 16.4 环境完成 Apple 无签名编译。**签名、安装和 iPad 真机显示尚未执行**，由用户自行签名安装后验收。
 
 ## 已实际验证
 
@@ -31,15 +31,21 @@ node --test tests/*.test.mjs
 
 浏览器 UI 检查和静态第三方 parser 仅用于本次开发验证，不是运行依赖。Windows 不会自动修改系统防火墙，本次没有创建防火墙规则。
 
-## 已配置，但必须在 GitHub macOS runner 执行
+## 已在 GitHub macOS runner 实际通过
 
 - `plutil` 验证工程与 Info.plist。
 - `swiftc` 编译并执行随附 `tests/ProtocolTests.swift`：有效/无效私有 IPv4、端口边界、中文多行 JSON 解码。
 - iPad 模拟器 Debug 无签名 Xcode build。
 - ARM64 真机 Release 无签名 Xcode build。
-- 可选手动签名 archive 和 IPA export（4 个 Secrets；见 README）。
+- 未签名 IPA 打包，包内为 `Payload/LanText.app`。
 
-这几项当前**没有构建成功日志**，不能视为已通过。上传整个项目到仓库根目录后，工作流自动执行；所有无签名步骤成功才表示苹果工程完成实际编译验证。签名步骤仅在手动勾选 `signed` 时运行。
+结果见 [成功构建 #2](https://github.com/wuhanhy668-byte/LanText/actions/runs/37601558185)，编译源码 commit 为 `6cee7db19d3480aa5412bcec8487b1bb71d6ffec`。Windows 和 ipad-unsigned job 均成功，签名 job 按预期跳过。
+
+IPA 已下载到 outputs/LanText-unsigned.ipa：71,643 字节；验证外层 artifact 的 SHA-256 与 GitHub 元数据一致、IPA ZIP 完整性通过、包内执行文件为 ARM64 Mach-O、UIDeviceFamily 为 iPad（2）、最低系统 17.0、局域网权限和 ATS 局域网配置均存在。IPA SHA-256：`de52bbb1cd31cc0c9d7abcde71e423c94a0a58cc45857444befb0b8228e35d9c`。
+
+首轮 CI 的 Swift 测试文件与 Endpoint.swift 名称大小写冲突，已通过重命名为 ProtocolTests.swift 修复；第二轮测试与两个 Xcode build 全部成功。现有编译警告为 SwiftUI onChange 旧重载弃用提示，以及未依赖 AppIntents 导致元数据提取跳过，不影响构建成功。
+
+可选签名 archive 和已签名 IPA export 流程尚未执行（4 个 Secrets；见 README）。
 
 ## iPad 真机验收清单
 
