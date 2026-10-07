@@ -34,7 +34,7 @@ node --test tests/*.test.mjs
 ## 已配置，但必须在 GitHub macOS runner 执行
 
 - `plutil` 验证工程与 Info.plist。
-- `swiftc` 编译并执行随附 `tests/endpoint.swift`：有效/无效私有 IPv4、端口边界、中文多行 JSON 解码。
+- `swiftc` 编译并执行随附 `tests/ProtocolTests.swift`：有效/无效私有 IPv4、端口边界、中文多行 JSON 解码。
 - iPad 模拟器 Debug 无签名 Xcode build。
 - ARM64 真机 Release 无签名 Xcode build。
 - 可选手动签名 archive 和 IPA export（4 个 Secrets；见 README）。

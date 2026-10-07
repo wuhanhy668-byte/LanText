@@ -50,7 +50,7 @@ jobs:
       - name: Test endpoint validation and decoding
         run: |
           mkdir -p build
-          swiftc ipad/LanText/Endpoint.swift tests/endpoint.swift -o build/endpoint-tests
+          swiftc ipad/LanText/Endpoint.swift tests/ProtocolTests.swift -o build/endpoint-tests
           build/endpoint-tests
       - name: Build simulator app without signing
         run: |
