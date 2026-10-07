@@ -1,0 +1,8 @@
+runtime/
+build/
+*.ipa
+*.xcarchive/
+*.p12
+*.mobileprovision
+.DS_Store
+xcuserdata/

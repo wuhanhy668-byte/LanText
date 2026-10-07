@@ -1,0 +1,35 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1;
+ classes = {};
+ objectVersion = 56;
+ objects = {
+  A00000000000000000000001 = {isa = PBXProject; attributes = {LastUpgradeCheck = 1600; TargetAttributes = {A00000000000000000000002 = {CreatedOnToolsVersion = 16.0; }; }; }; buildConfigurationList = A00000000000000000000020; compatibilityVersion = "Xcode 14.0"; developmentRegion = zh_CN; hasScannedForEncodings = 0; knownRegions = (zh_CN, en, Base,); mainGroup = A00000000000000000000003; productRefGroup = A00000000000000000000004; projectDirPath = ""; projectRoot = ""; targets = (A00000000000000000000002,); };
+  A00000000000000000000002 = {isa = PBXNativeTarget; buildConfigurationList = A00000000000000000000021; buildPhases = (A00000000000000000000005, A00000000000000000000006, A00000000000000000000007,); buildRules = (); dependencies = (); name = LanText; productName = LanText; productReference = A00000000000000000000008; productType = "com.apple.product-type.application"; };
+  A00000000000000000000003 = {isa = PBXGroup; children = (A00000000000000000000009, A00000000000000000000004,); sourceTree = "<group>"; };
+  A00000000000000000000004 = {isa = PBXGroup; children = (A00000000000000000000008,); name = Products; sourceTree = "<group>"; };
+  A00000000000000000000009 = {isa = PBXGroup; children = (A00000000000000000000010, A00000000000000000000011, A00000000000000000000012, A00000000000000000000013, A00000000000000000000014, A00000000000000000000015,); path = LanText; sourceTree = "<group>"; };
+  A00000000000000000000008 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LanText.app; sourceTree = BUILT_PRODUCTS_DIR; };
+  A00000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanTextApp.swift; sourceTree = "<group>"; };
+  A00000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+  A00000000000000000000012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncModel.swift; sourceTree = "<group>"; };
+  A00000000000000000000013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+  A00000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+  A00000000000000000000015 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+  A00000000000000000000030 = {isa = PBXBuildFile; fileRef = A00000000000000000000010; };
+  A00000000000000000000031 = {isa = PBXBuildFile; fileRef = A00000000000000000000011; };
+  A00000000000000000000032 = {isa = PBXBuildFile; fileRef = A00000000000000000000012; };
+  A00000000000000000000033 = {isa = PBXBuildFile; fileRef = A00000000000000000000013; };
+  A00000000000000000000034 = {isa = PBXBuildFile; fileRef = A00000000000000000000015; };
+  A00000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000030, A00000000000000000000031, A00000000000000000000032, A00000000000000000000033,); runOnlyForDeploymentPostprocessing = 0; };
+  A00000000000000000000006 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+  A00000000000000000000007 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000034,); runOnlyForDeploymentPostprocessing = 0; };
+  A00000000000000000000020 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000022, A00000000000000000000023,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  A00000000000000000000021 = {isa = XCConfigurationList; buildConfigurations = (A00000000000000000000024, A00000000000000000000025,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+  A00000000000000000000022 = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; DEBUG_INFORMATION_FORMAT = dwarf; }; name = Debug; };
+  A00000000000000000000023 = {isa = XCBuildConfiguration; buildSettings = {CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; SWIFT_COMPILATION_MODE = wholemodule; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; }; name = Release; };
+  A00000000000000000000024 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LanText/Info.plist; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",); MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LanText; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SUPPORTS_MACCATALYST = NO; TARGETED_DEVICE_FAMILY = 2; }; name = Debug; };
+  A00000000000000000000025 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LanText/Info.plist; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",); MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = com.example.LanText; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SUPPORTS_MACCATALYST = NO; TARGETED_DEVICE_FAMILY = 2; }; name = Release; };
+ };
+ rootObject = A00000000000000000000001;
+}
