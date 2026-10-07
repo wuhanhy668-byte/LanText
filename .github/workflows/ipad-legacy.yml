@@ -1,0 +1,71 @@
+name: Legacy native iPad build
+on:
+  workflow_dispatch:
+    inputs:
+      signed:
+        type: boolean
+        default: false
+      export_method:
+        type: choice
+        options: [release-testing, debugging, app-store-connect]
+        default: release-testing
+permissions:
+  contents: read
+jobs:
+  ipad-unsigned:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode version and plist validation
+        run: |
+          xcodebuild -version
+          plutil -lint ipad/LanText/Info.plist ipad/LanText.xcodeproj/project.pbxproj
+      - name: Test endpoint validation and decoding
+        run: |
+          mkdir -p build
+          swiftc ipad/LanText/Endpoint.swift tests/ProtocolTests.swift -o build/endpoint-tests
+          build/endpoint-tests
+      - name: Build simulator app without signing
+        run: |
+          xcodebuild -project ipad/LanText.xcodeproj -scheme LanText -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build/simulator CODE_SIGNING_ALLOWED=NO build
+      - name: Build ARM64 device app without signing
+        run: |
+          xcodebuild -project ipad/LanText.xcodeproj -scheme LanText -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build/device CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+          ditto -c -k --keepParent build/device/Build/Products/Release-iphoneos/LanText.app build/LanText-unsigned-device.zip
+          ditto -c -k --keepParent build/simulator/Build/Products/Debug-iphonesimulator/LanText.app build/LanText-simulator.zip
+          mkdir -p build/unsigned-ipa/Payload
+          ditto build/device/Build/Products/Release-iphoneos/LanText.app build/unsigned-ipa/Payload/LanText.app
+          cd build/unsigned-ipa
+          zip -qry ../LanText-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LanText-unsigned
+          path: |
+            build/*.zip
+            build/LanText-unsigned.ipa
+  ipad-signed:
+    if: github.event_name == 'workflow_dispatch' && inputs.signed
+    needs: [ipad-unsigned]
+    runs-on: macos-15
+    env:
+      BUNDLE_ID: ${{ vars.BUNDLE_ID || 'com.example.LanText' }}
+      EXPORT_METHOD: ${{ inputs.export_method }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install signing assets and archive/export
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: python3 scripts/sign.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LanText-signed-IPA
+          path: build/export/*.ipa
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove signing assets
+        if: always()
+        run: python3 scripts/sign.py --cleanup
+

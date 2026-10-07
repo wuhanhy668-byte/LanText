@@ -3,16 +3,6 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-    inputs:
-      signed:
-        description: 'Build signed IPA (requires signing secrets)'
-        type: boolean
-        default: false
-      export_method:
-        description: 'Export method matching your provisioning profile'
-        type: choice
-        options: [release-testing, debugging, app-store-connect]
-        default: release-testing
 permissions:
   contents: read
 jobs:
@@ -20,78 +10,17 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm test
-      - name: Build standalone Windows EXE
+      - name: Build desktop with embedded viewer
+        shell: pwsh
+        run: ./scripts/build-desktop.ps1 -OutputPath "$PWD/LanText-Web.exe"
+      - name: Test native service
         shell: pwsh
         run: |
-          npm install --prefix build/tools --no-audit --no-fund postject@1.0.0-alpha.6
-          node scripts/build-exe.mjs
-      - name: Package Windows sources
-        shell: pwsh
-        run: |
-          Compress-Archive -Path windows, tests, Start-Windows.cmd, package.json, README.md, TESTING.md -DestinationPath LanText-Windows.zip
+          $p = Start-Process ./LanText-Web.exe -ArgumentList '--self-test', "$PWD/test-result.txt" -Wait -PassThru
+          Get-Content test-result.txt
+          if ($p.ExitCode -ne 0) { throw 'Native tests failed' }
       - uses: actions/upload-artifact@v4
         with:
-          name: LanText-Windows
-          path: |
-            LanText-Windows.zip
-            build/exe/LanText.exe
-  ipad-unsigned:
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-      - name: Xcode version and plist validation
-        run: |
-          xcodebuild -version
-          plutil -lint ipad/LanText/Info.plist ipad/LanText.xcodeproj/project.pbxproj
-      - name: Test endpoint validation and decoding
-        run: |
-          mkdir -p build
-          swiftc ipad/LanText/Endpoint.swift tests/ProtocolTests.swift -o build/endpoint-tests
-          build/endpoint-tests
-      - name: Build simulator app without signing
-        run: |
-          xcodebuild -project ipad/LanText.xcodeproj -scheme LanText -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build/simulator CODE_SIGNING_ALLOWED=NO build
-      - name: Build ARM64 device app without signing
-        run: |
-          xcodebuild -project ipad/LanText.xcodeproj -scheme LanText -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath build/device CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
-          ditto -c -k --keepParent build/device/Build/Products/Release-iphoneos/LanText.app build/LanText-unsigned-device.zip
-          ditto -c -k --keepParent build/simulator/Build/Products/Debug-iphonesimulator/LanText.app build/LanText-simulator.zip
-          mkdir -p build/unsigned-ipa/Payload
-          ditto build/device/Build/Products/Release-iphoneos/LanText.app build/unsigned-ipa/Payload/LanText.app
-          cd build/unsigned-ipa
-          zip -qry ../LanText-unsigned.ipa Payload
-      - uses: actions/upload-artifact@v4
-        with:
-          name: LanText-unsigned
-          path: |
-            build/*.zip
-            build/LanText-unsigned.ipa
-  ipad-signed:
-    if: github.event_name == 'workflow_dispatch' && inputs.signed
-    needs: [windows, ipad-unsigned]
-    runs-on: macos-15
-    env:
-      BUNDLE_ID: ${{ vars.BUNDLE_ID || 'com.example.LanText' }}
-      EXPORT_METHOD: ${{ inputs.export_method }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install signing assets and archive/export
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: python3 scripts/sign.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: LanText-signed-IPA
-          path: build/export/*.ipa
+          name: LanText-Web-Windows
+          path: LanText-Web.exe
           if-no-files-found: error
-          retention-days: 7
-      - name: Remove signing assets
-        if: always()
-        run: python3 scripts/sign.py --cleanup
